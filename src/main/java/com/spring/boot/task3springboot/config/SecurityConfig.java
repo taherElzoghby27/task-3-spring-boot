@@ -25,7 +25,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
                 authorizeRequests ->
-                        authorizeRequests.requestMatchers(HttpMethod.GET, "/users/**", "/posts/**").hasRole("ADMIN")
+                        authorizeRequests.requestMatchers(HttpMethod.GET, "/users/**", "/posts/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers(HttpMethod.POST, "/users/**", "/posts/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.PUT, "/users/**", "/posts/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.DELETE, "/users/**", "/posts/**").hasRole("USER")

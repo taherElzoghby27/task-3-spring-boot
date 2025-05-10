@@ -15,7 +15,7 @@ public interface PostService {
 
     void deletePostById(Long id) throws SystemException;
 
-    PostDto updatePost(PostDto postDto) throws SystemException;
+    PostDto updatePost(PostVmRequest postVmRequest) throws SystemException;
 
     List<PostDto> getPostsByUsers();
 

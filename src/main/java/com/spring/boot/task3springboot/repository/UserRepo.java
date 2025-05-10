@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    @Query("select u from User u left join Post p where u.id=:id")
+    @Query("select u from User u left join u.posts p where u.id=:id")
     User getUserWithAllPosts(Long id);
 
-    @Query("select u from User u left join Post p")
+    @Query("select u from User u left join u.posts p")
     List<User> getUsersWithAllPosts();
 }

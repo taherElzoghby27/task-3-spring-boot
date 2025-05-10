@@ -29,7 +29,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getPosts() {
         List<Post> posts = postRepo.findAll();
-        return posts.stream().map(PostMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+        return posts.stream().map(PostMapper.INSTANCE_POST::toPostDto).collect(Collectors.toList());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PostServiceImpl implements PostService {
         if (post.isEmpty()) {
             throw new SystemException("error.post.notfound");
         }
-        return PostMapper.INSTANCE.toPostDto(post.get());
+        return PostMapper.INSTANCE_POST.toPostDto(post.get());
     }
 
     @Override
@@ -61,31 +61,34 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDto updatePost(PostDto postDto) throws SystemException {
-        if (Objects.isNull(postDto.getId())) {
+    public PostDto updatePost(PostVmRequest postVmRequest) throws SystemException {
+        if (Objects.isNull(postVmRequest.getId())) {
             throw new SystemException("error.id.must.be.notnull");
         }
-        if (Objects.isNull(getPostById(postDto.getId()))) {
+        if (Objects.isNull(getPostById(postVmRequest.getId()))) {
             throw new SystemException("error.post.notfound");
         }
-        Post post = PostMapper.INSTANCE.toPost(postDto);
-        post = postRepo.save(post);
-        return PostMapper.INSTANCE.toPostDto(post);
+        return getPostDto(postVmRequest);
     }
 
     private PostDto getPostDto(PostVmRequest postVmRequest) throws SystemException {
-        Post post = PostMapper.INSTANCE.toPost(postVmRequest);
-        UserDto userDto = userService.getUserById(postVmRequest.getUserId());
-        User user = AppUserMapper.INSTANCE.toUser(userDto);
-        post.setUser(user);
-        post = postRepo.save(post);
-        return PostMapper.INSTANCE.toPostDto(post);
+        try {
+            Post post = PostMapper.INSTANCE_POST.toPost(postVmRequest);
+            UserDto userDto = userService.getUserById(postVmRequest.getUserId());
+            User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
+            post.setUser(user);
+            post = postRepo.save(post);
+            return PostMapper.INSTANCE_POST.toPostDto(post);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new SystemException("something.went.wrong");
+        }
     }
 
     @Override
     public List<PostDto> getPostsByUsers() {
         List<Post> posts = postRepo.getPostsByUsers();
-        return posts.stream().map(PostMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+        return posts.stream().map(PostMapper.INSTANCE_POST::toPostDto).collect(Collectors.toList());
     }
 
     @Override
@@ -94,6 +97,6 @@ public class PostServiceImpl implements PostService {
         if (Objects.isNull(post)) {
             throw new Exception("error.post.notfound");
         }
-        return PostMapper.INSTANCE.toPostDto(post);
+        return PostMapper.INSTANCE_POST.toPostDto(post);
     }
 }

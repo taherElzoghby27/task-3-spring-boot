@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PostRepo extends JpaRepository<Post, Long> {
-    @Query("select p from Post p left join User u ")
+    @Query("select p from Post p left join p.user u ")
     List<Post> getPostsByUsers();
 
-    @Query("select p from Post p join User u where p.id=:id")
+    @Query("select p from Post p join p.user u where p.id=:id")
     Post getPostByIdWithUser(Long id);
 }

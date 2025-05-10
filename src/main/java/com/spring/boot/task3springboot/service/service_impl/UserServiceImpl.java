@@ -24,9 +24,9 @@ public class UserServiceImpl implements UserService {
         if (Objects.nonNull(userDto.getId())) {
             throw new SystemException("error.id.must.be.null");
         }
-        User user = AppUserMapper.INSTANCE.toUser(userDto);
+        User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
         user = userRepo.save(user);
-        return AppUserMapper.INSTANCE.toUserDto(user);
+        return AppUserMapper.INSTANCE_USER.toUserDto(user);
     }
 
     @Override
@@ -37,21 +37,26 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(getUserById(userDto.getId()))) {
             throw new SystemException("error.user.notfound");
         }
-        User user = AppUserMapper.INSTANCE.toUser(userDto);
+        User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
         user = userRepo.save(user);
-        return AppUserMapper.INSTANCE.toUserDto(user);
+        return AppUserMapper.INSTANCE_USER.toUserDto(user);
     }
 
     @Override
     public UserDto getUserById(Long id) throws SystemException {
-        if (Objects.isNull(id)) {
-            throw new SystemException("error.id.must.be.notnull");
+        try {
+            if (Objects.isNull(id)) {
+                throw new SystemException("error.id.must.be.notnull");
+            }
+            Optional<User> user = userRepo.findById(id);
+            if (user.isEmpty()) {
+                throw new SystemException("error.user.notfound");
+            }
+            return AppUserMapper.INSTANCE_USER.toUserDto(user.get());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new SystemException("something.went.wrong");
         }
-        Optional<User> user = userRepo.findById(id);
-        if (user.isEmpty()) {
-            throw new SystemException("error.user.notfound");
-        }
-        return AppUserMapper.INSTANCE.toUserDto(user.get());
     }
 
     @Override
@@ -60,8 +65,8 @@ public class UserServiceImpl implements UserService {
         return getUsersDto(users);
     }
 
-    private static List<UserDto> getUsersDto(List<User> users) {
-        return users.stream().map(AppUserMapper.INSTANCE::toUserDto).collect(Collectors.toList());
+    private List<UserDto> getUsersDto(List<User> users) {
+        return users.stream().map(AppUserMapper.INSTANCE_USER::toUserDto).collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +86,7 @@ public class UserServiceImpl implements UserService {
             throw new SystemException("error.id.must.be.notnull");
         }
         User user = userRepo.getUserWithAllPosts(id);
-        return AppUserMapper.INSTANCE.toUserDto(user);
+        return AppUserMapper.INSTANCE_USER.toUserDto(user);
     }
 
     @Override

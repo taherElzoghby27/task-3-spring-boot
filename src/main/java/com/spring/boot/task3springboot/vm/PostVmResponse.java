@@ -20,4 +20,5 @@ public class PostVmResponse {
     @NotEmpty(message = "error.field.empty.image")
     @JsonProperty("image_path")
     private String imagePath;
+    private UserResponseVm user;
 }

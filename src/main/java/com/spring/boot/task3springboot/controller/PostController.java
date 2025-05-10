@@ -39,8 +39,8 @@ public class PostController {
     }
 
     @PutMapping("/update-post")
-    public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto) throws SystemException {
-        return ResponseEntity.ok(postService.updatePost(postDto));
+    public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostVmRequest postVmRequest) throws SystemException {
+        return ResponseEntity.ok(postService.updatePost(postVmRequest));
     }
 
     @GetMapping("/posts-by-user")
