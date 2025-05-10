@@ -1,0 +1,99 @@
+package com.spring.boot.task3springboot.service.service_impl;
+
+import com.spring.boot.task3springboot.dto.PostDto;
+import com.spring.boot.task3springboot.dto.UserDto;
+import com.spring.boot.task3springboot.mapper.AppUserMapper;
+import com.spring.boot.task3springboot.mapper.PostMapper;
+import com.spring.boot.task3springboot.model.Post;
+import com.spring.boot.task3springboot.model.User;
+import com.spring.boot.task3springboot.repository.PostRepo;
+import com.spring.boot.task3springboot.service.PostService;
+import com.spring.boot.task3springboot.service.UserService;
+import com.spring.boot.task3springboot.vm.PostVmRequest;
+import jakarta.transaction.SystemException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class PostServiceImpl implements PostService {
+    @Autowired
+    private PostRepo postRepo;
+    @Autowired
+    private UserService userService;
+
+    @Override
+    public List<PostDto> getPosts() {
+        List<Post> posts = postRepo.findAll();
+        return posts.stream().map(PostMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(Long id) throws SystemException {
+        if (Objects.isNull(id)) {
+            throw new SystemException("error.id.must.be.notnull");
+        }
+        Optional<Post> post = postRepo.findById(id);
+        if (post.isEmpty()) {
+            throw new SystemException("error.post.notfound");
+        }
+        return PostMapper.INSTANCE.toPostDto(post.get());
+    }
+
+    @Override
+    public PostDto createPost(PostVmRequest postVmRequest) throws SystemException {
+        if (Objects.nonNull(postVmRequest.getId())) {
+            throw new SystemException("error.id.must.be.notnull");
+        }
+        return getPostDto(postVmRequest);
+    }
+
+    @Override
+    public void deletePostById(Long id) throws SystemException {
+        if (Objects.isNull(id)) {
+            throw new SystemException("error.id.must.be.notnull");
+        }
+        postRepo.deleteById(id);
+    }
+
+    @Override
+    public PostDto updatePost(PostDto postDto) throws SystemException {
+        if (Objects.isNull(postDto.getId())) {
+            throw new SystemException("error.id.must.be.notnull");
+        }
+        if (Objects.isNull(getPostById(postDto.getId()))) {
+            throw new SystemException("error.post.notfound");
+        }
+        Post post = PostMapper.INSTANCE.toPost(postDto);
+        post = postRepo.save(post);
+        return PostMapper.INSTANCE.toPostDto(post);
+    }
+
+    private PostDto getPostDto(PostVmRequest postVmRequest) throws SystemException {
+        Post post = PostMapper.INSTANCE.toPost(postVmRequest);
+        UserDto userDto = userService.getUserById(postVmRequest.getUserId());
+        User user = AppUserMapper.INSTANCE.toUser(userDto);
+        post.setUser(user);
+        post = postRepo.save(post);
+        return PostMapper.INSTANCE.toPostDto(post);
+    }
+
+    @Override
+    public List<PostDto> getPostsByUsers() {
+        List<Post> posts = postRepo.getPostsByUsers();
+        return posts.stream().map(PostMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostByIdWithUser(Long id) throws Exception {
+        Post post = postRepo.getPostByIdWithUser(id);
+        if (Objects.isNull(post)) {
+            throw new Exception("error.post.notfound");
+        }
+        return PostMapper.INSTANCE.toPostDto(post);
+    }
+}
