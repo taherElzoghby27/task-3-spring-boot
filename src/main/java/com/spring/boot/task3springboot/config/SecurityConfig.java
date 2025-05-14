@@ -13,11 +13,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    //memory level
     @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         UserDetails user1 = User.withUsername("user").password("{noop}password").roles("ADMIN", "USER").build();
-        UserDetails user2 = User.withUsername("user1").password("{noop}password2").roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(user1, user2);
+        UserDetails user2 = User.withUsername("user2").password("{noop}password2").roles("ADMIN").build();
+        UserDetails user3 = User.withUsername("user3").password("{bcrypt}$2a$12$ygRKXseSJFOHv9ftcQhyne9CwJCKMkJPFNt9LFjPmS99YwLi2l0zy")
+                .roles("USER").build();
+        return new InMemoryUserDetailsManager(user1, user2, user3);
     }
 
     @Bean
