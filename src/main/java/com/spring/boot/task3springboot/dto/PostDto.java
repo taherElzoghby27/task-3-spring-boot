@@ -1,6 +1,6 @@
 package com.spring.boot.task3springboot.dto;
 
-import com.spring.boot.task3springboot.vm.UserResponseVm;
+import com.spring.boot.task3springboot.vm.UserResponseVmWithoutPost;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -19,5 +19,5 @@ public class PostDto {
     private String text;
     @NotEmpty(message = "error.field.empty.image")
     private String imagePath;
-    private UserResponseVm user;
+    private UserResponseVmWithoutPost user;
 }

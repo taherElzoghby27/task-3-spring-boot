@@ -1,26 +1,21 @@
 package com.spring.boot.task3springboot.vm;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponseVm {
     private Long id;
-    @NotEmpty
-    @Size(min = 7, max = 80)
     private String name;
-    @NotEmpty
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$\n")
-    private String password;
-    @Min(18)
-    @NotEmpty
     private int age;
+    private List<PostVmResponse> posts;
 }

@@ -10,6 +10,7 @@ import com.spring.boot.task3springboot.repository.PostRepo;
 import com.spring.boot.task3springboot.service.PostService;
 import com.spring.boot.task3springboot.service.UserService;
 import com.spring.boot.task3springboot.vm.PostVmRequest;
+import com.spring.boot.task3springboot.vm.UserResponseVm;
 import jakarta.transaction.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,8 +75,8 @@ public class PostServiceImpl implements PostService {
     private PostDto getPostDto(PostVmRequest postVmRequest) throws SystemException {
         try {
             Post post = PostMapper.INSTANCE_POST.toPost(postVmRequest);
-            UserDto userDto = userService.getUserById(postVmRequest.getUserId());
-            User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
+            UserResponseVm userResponseVm = userService.getUserById(postVmRequest.getUserId());
+            User user = AppUserMapper.INSTANCE_USER.toUser(userResponseVm);
             post.setUser(user);
             post = postRepo.save(post);
             return PostMapper.INSTANCE_POST.toPostDto(post);

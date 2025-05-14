@@ -1,22 +1,21 @@
 package com.spring.boot.task3springboot.service;
 
 import com.spring.boot.task3springboot.dto.UserDto;
+import com.spring.boot.task3springboot.vm.UserResponseVm;
 import jakarta.transaction.SystemException;
 
 import java.util.List;
 
 public interface UserService {
-    UserDto createUser(UserDto user) throws SystemException;
+    UserResponseVm createUser(UserDto user) throws SystemException;
 
-    UserDto updateUser(UserDto user) throws SystemException;
+    UserResponseVm updateUser(UserDto user) throws SystemException;
 
-    UserDto getUserById(Long id) throws SystemException;
+    UserResponseVm getUserById(Long id) throws SystemException;
 
-    List<UserDto> getUsers();
+    List<UserResponseVm> getUsers();
 
     void deleteUserById(Long id) throws SystemException;
 
-    UserDto getUserWithAllPosts(Long id) throws SystemException;
-
-    List<UserDto> getUsersWithAllPosts();
+    UserResponseVm getUserWithAllPosts(Long id) throws SystemException;
 }

@@ -5,6 +5,7 @@ import com.spring.boot.task3springboot.mapper.AppUserMapper;
 import com.spring.boot.task3springboot.model.User;
 import com.spring.boot.task3springboot.repository.UserRepo;
 import com.spring.boot.task3springboot.service.UserService;
+import com.spring.boot.task3springboot.vm.UserResponseVm;
 import jakarta.transaction.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,17 @@ public class UserServiceImpl implements UserService {
     private UserRepo userRepo;
 
     @Override
-    public UserDto createUser(UserDto userDto) throws SystemException {
+    public UserResponseVm createUser(UserDto userDto) throws SystemException {
         if (Objects.nonNull(userDto.getId())) {
             throw new SystemException("error.id.must.be.null");
         }
         User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
         user = userRepo.save(user);
-        return AppUserMapper.INSTANCE_USER.toUserDto(user);
+        return AppUserMapper.INSTANCE_USER.toUserResponseVm(user);
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) throws SystemException {
+    public UserResponseVm updateUser(UserDto userDto) throws SystemException {
         if (Objects.isNull(userDto.getId())) {
             throw new SystemException("error.id.must.be.notnull");
         }
@@ -39,11 +40,11 @@ public class UserServiceImpl implements UserService {
         }
         User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
         user = userRepo.save(user);
-        return AppUserMapper.INSTANCE_USER.toUserDto(user);
+        return AppUserMapper.INSTANCE_USER.toUserResponseVm(user);
     }
 
     @Override
-    public UserDto getUserById(Long id) throws SystemException {
+    public UserResponseVm getUserById(Long id) throws SystemException {
         try {
             if (Objects.isNull(id)) {
                 throw new SystemException("error.id.must.be.notnull");
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
             if (user.isEmpty()) {
                 throw new SystemException("error.user.notfound");
             }
-            return AppUserMapper.INSTANCE_USER.toUserDto(user.get());
+            return AppUserMapper.INSTANCE_USER.toUserResponseVm(user.get());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new SystemException("something.went.wrong");
@@ -60,13 +61,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers() {
+    public List<UserResponseVm> getUsers() {
         List<User> users = userRepo.findAll();
-        return getUsersDto(users);
+        return getUserResponseVms(users);
     }
 
-    private List<UserDto> getUsersDto(List<User> users) {
-        return users.stream().map(AppUserMapper.INSTANCE_USER::toUserDto).collect(Collectors.toList());
+    private static List<UserResponseVm> getUserResponseVms(List<User> users) {
+        return users.stream().map(AppUserMapper.INSTANCE_USER::toUserResponseVm).collect(Collectors.toList());
     }
 
     @Override
@@ -81,17 +82,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserWithAllPosts(Long id) throws SystemException {
+    public UserResponseVm getUserWithAllPosts(Long id) throws SystemException {
         if (Objects.isNull(id)) {
             throw new SystemException("error.id.must.be.notnull");
         }
         User user = userRepo.getUserWithAllPosts(id);
-        return AppUserMapper.INSTANCE_USER.toUserDto(user);
-    }
-
-    @Override
-    public List<UserDto> getUsersWithAllPosts() {
-        List<User> users = userRepo.getUsersWithAllPosts();
-        return getUsersDto(users);
+        return AppUserMapper.INSTANCE_USER.toUserResponseVm(user);
     }
 }
