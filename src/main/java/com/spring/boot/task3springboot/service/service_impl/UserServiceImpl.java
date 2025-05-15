@@ -8,6 +8,7 @@ import com.spring.boot.task3springboot.service.UserService;
 import com.spring.boot.task3springboot.vm.UserResponseVm;
 import jakarta.transaction.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +21,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UserResponseVm createUser(UserDto userDto) throws SystemException {
         if (Objects.nonNull(userDto.getId())) {
             throw new SystemException("error.id.must.be.null");
         }
         User user = AppUserMapper.INSTANCE_USER.toUser(userDto);
+        //encode password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepo.save(user);
         return AppUserMapper.INSTANCE_USER.toUserResponseVm(user);
     }
