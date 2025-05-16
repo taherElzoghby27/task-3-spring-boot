@@ -14,3 +14,7 @@ spring:
     show-sql: true
 server:
   port: 6060
+
+token:
+  secret: 829ryhwffh31f3iufhjw98rpur38n43u9
+  time: 24h
