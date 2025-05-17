@@ -2,13 +2,14 @@ package com.spring.boot.task3springboot.config;
 
 import com.spring.boot.task3springboot.dto.AccountDto;
 import com.spring.boot.task3springboot.dto.UserSecurityDto;
-import com.spring.boot.task3springboot.service.UserAuthSecurityService;
+import com.spring.boot.task3springboot.service.AccountService;
 import com.spring.boot.task3springboot.setting.JWTToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class TokenHandler {
     private JwtBuilder jwtBuilder;
     private JwtParser jwtParser;
     @Autowired
-    private UserAuthSecurityService userAuthSecurityService;
+    private AccountService accountService;
 
     public TokenHandler(JWTToken jwtToken) {
         this.secret = jwtToken.getSecret();
@@ -45,16 +46,18 @@ public class TokenHandler {
         return this.jwtBuilder.compact();
     }
 
-    public Boolean validateToken(String token) {
+    public AccountDto validateToken(String token) throws SystemException {
+
         if (this.jwtParser.isSigned(token)) {
             Claims claims = this.jwtParser.parseClaimsJws(token).getBody();
             String username = claims.getSubject();
             Date expirationDate = claims.getExpiration();
             Date issuedDate = claims.getIssuedAt();
-            UserSecurityDto user = userAuthSecurityService.getUserByUserName(username);
-            return expirationDate.after(new Date()) && issuedDate.before(expirationDate) && Objects.nonNull(user);
+            AccountDto user = accountService.getAccountByUserName(username);
+            boolean isValidate = expirationDate.after(new Date()) && issuedDate.before(expirationDate) && Objects.nonNull(user);
+            return isValidate ? user : null;
         }
-        return false;
+        return null;
     }
 
     private Date createExpirationDate(Date date) {

@@ -1,32 +1,30 @@
 package com.spring.boot.task3springboot.config;
 
+import com.spring.boot.task3springboot.config.filters.AuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig {
+    //    @Autowired
+//    private UserDetailsService userDetailsService;
     @Autowired
-    private UserDetailsService userDetailsService;
+    private AuthFilter authFilters;
 
     //memory level
 //    @Bean
@@ -59,6 +57,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/users/**", "/posts/**").hasRole("USER")
                                 .requestMatchers(HttpMethod.DELETE, "/users/**", "/posts/**").hasRole("USER")
         );
+        http.addFilterBefore(authFilters, UsernamePasswordAuthenticationFilter.class);
         http.httpBasic(httpBasic -> Customizer.withDefaults());
         return http.build();
     }
