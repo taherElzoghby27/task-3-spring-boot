@@ -3,6 +3,7 @@ package com.spring.boot.task3springboot.config.filters;
 import com.spring.boot.task3springboot.config.TokenHandler;
 import com.spring.boot.task3springboot.dto.AccountDto;
 import com.spring.boot.task3springboot.dto.UserSecurityDto;
+import com.spring.boot.task3springboot.mapper.AccountMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,12 +50,13 @@ public class AuthFilter extends OncePerRequestFilter {
                     .map(authority -> new SimpleGrantedAuthority("ROLE_" + authority.getRole()))
                     .toList();
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    userValidated.getUsername(),
+                    userValidated,
                     userValidated.getPassword(),
                     roles);
             //set to security context
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            //filterChain.doFilter(request, response);
+            //complete filter
+            filterChain.doFilter(request, response);
         } catch (SystemException e) {
             throw new RuntimeException(e);
         }
@@ -63,9 +65,6 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        if (path.contains("auth")) {
-            return true;
-        }
-        return false;
+        return path.contains("auth");
     }
 }

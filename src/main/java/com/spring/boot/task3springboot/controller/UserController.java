@@ -7,6 +7,7 @@ import jakarta.transaction.SystemException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,6 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/all-users")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<UserResponseVm>> getAllUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }

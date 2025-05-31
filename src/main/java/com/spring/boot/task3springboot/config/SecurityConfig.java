@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.sql.DataSource;
 
 @Configuration
+@EnableMethodSecurity//for PreAuthorize
 public class SecurityConfig {
     //    @Autowired
 //    private UserDetailsService userDetailsService;
@@ -49,16 +52,19 @@ public class SecurityConfig {
 //        );
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
-                authorizeRequests ->
-                        authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/accounts/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/users/**", "/posts/**").hasAnyRole("ADMIN", "USER")
-                                .requestMatchers(HttpMethod.POST, "/users/**", "/posts/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers(HttpMethod.PUT, "/users/**", "/posts/**").hasRole("USER")
-                                .requestMatchers(HttpMethod.DELETE, "/users/**", "/posts/**").hasRole("USER")
+                authRequest -> authRequest.requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated()
         );
+//                                .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/accounts/**").permitAll()
+//                                .requestMatchers(HttpMethod.GET, "/users/**", "/posts/**").hasAnyRole("ADMIN", "USER")
+//                                .requestMatchers(HttpMethod.POST, "/users/**", "/posts/**").hasAnyRole("USER", "ADMIN")
+//                                .requestMatchers(HttpMethod.PUT, "/users/**", "/posts/**").hasRole("USER")
+//                                .requestMatchers(HttpMethod.DELETE, "/users/**", "/posts/**").hasRole("USER")
+
+
         http.addFilterBefore(authFilters, UsernamePasswordAuthenticationFilter.class);
-        http.httpBasic(httpBasic -> Customizer.withDefaults());
+        //http.httpBasic(httpBasic -> Customizer.withDefaults());//for basic auth
         return http.build();
     }
 

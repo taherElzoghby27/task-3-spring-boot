@@ -48,14 +48,19 @@ public class TokenHandler {
 
     public AccountDto validateToken(String token) throws SystemException {
 
-        if (this.jwtParser.isSigned(token)) {
-            Claims claims = this.jwtParser.parseClaimsJws(token).getBody();
-            String username = claims.getSubject();
-            Date expirationDate = claims.getExpiration();
-            Date issuedDate = claims.getIssuedAt();
-            AccountDto user = accountService.getAccountByUserName(username);
-            boolean isValidate = expirationDate.after(new Date()) && issuedDate.before(expirationDate) && Objects.nonNull(user);
-            return isValidate ? user : null;
+        try {
+            if (this.jwtParser.isSigned(token)) {
+                Claims claims = this.jwtParser.parseClaimsJws(token).getBody();
+                String username = claims.getSubject();
+                Date expirationDate = claims.getExpiration();
+                Date issuedDate = claims.getIssuedAt();
+                AccountDto user = accountService.getAccountByUserName(username);
+                boolean isValidate = expirationDate.after(new Date()) && issuedDate.before(expirationDate) && Objects.nonNull(user);
+                return isValidate ? user : null;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new SystemException("something.wrong");
         }
         return null;
     }

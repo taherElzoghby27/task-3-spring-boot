@@ -1,12 +1,14 @@
 package com.spring.boot.task3springboot.controller;
 
 import com.spring.boot.task3springboot.dto.AccountDto;
+import com.spring.boot.task3springboot.enums.RoleEnum;
 import com.spring.boot.task3springboot.service.AuthService;
 import com.spring.boot.task3springboot.vm.AccountResponseVm;
 import jakarta.transaction.SystemException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

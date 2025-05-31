@@ -21,5 +21,6 @@ public class Post {
     @Column(nullable = false)
     private String imagePath;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;
 }
