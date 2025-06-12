@@ -18,12 +18,13 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
     private String password;
-    @ManyToMany(mappedBy = "accounts", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(schema = "hr", uniqueConstraints = @UniqueConstraint(columnNames = {"ACCOUNTS_ID", "ROLES_ID"}))
     private List<Role> roles;
 }

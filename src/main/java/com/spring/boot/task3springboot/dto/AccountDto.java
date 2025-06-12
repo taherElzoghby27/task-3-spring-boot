@@ -1,6 +1,5 @@
 package com.spring.boot.task3springboot.dto;
 
-import com.spring.boot.task3springboot.vm.RoleDtoVm;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +16,5 @@ public class AccountDto {
     private String username;
     private String phoneNumber;
     private String password;
-    private List<RoleDtoVm> roles;
+    private List<RoleDto> roles;
 }

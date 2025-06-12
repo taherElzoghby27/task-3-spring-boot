@@ -1,7 +1,10 @@
 package com.spring.boot.task3springboot.service.service_impl;
 
 import com.spring.boot.task3springboot.dto.AccountDto;
+import com.spring.boot.task3springboot.dto.RoleDto;
+import com.spring.boot.task3springboot.enums.RoleEnum;
 import com.spring.boot.task3springboot.mapper.AccountMapper;
+import com.spring.boot.task3springboot.mapper.RoleMapper;
 import com.spring.boot.task3springboot.model.Account;
 import com.spring.boot.task3springboot.model.Role;
 import com.spring.boot.task3springboot.repository.AccountRepo;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,13 +37,15 @@ public class AccountServiceImpl implements AccountService {
             }
             Account account = AccountMapper.INSTANCE_ACCOUNT.toAccount(accountDto);
             account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-            account = accountRepo.save(account);//account created - role created already
-            //add roles to account to make relation
-            Account finalAccount = account;
+            RoleDto roleDto = roleService.findByRole(RoleEnum.USER.toString());
+            Role role = RoleMapper.ROLE_MAPPER.toRole(roleDto);
             List<Role> roles = account.getRoles();
-            roles.forEach(role -> role.setAccounts(List.of(finalAccount)));
-            //update roles
-            roleService.update(roles);
+            if (Objects.isNull(roles)) {
+                roles = new ArrayList<>();
+            }
+            roles.add(role);
+            account.setRoles(roles);
+            account = accountRepo.save(account);
             return AccountMapper.INSTANCE_ACCOUNT.toAccountDto(account);
         } catch (Exception e) {
             throw new SystemException("something.went.wrong");

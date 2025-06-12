@@ -23,8 +23,7 @@ public class Role {
     @Column(unique = true)
     private String role;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(schema = "hr",uniqueConstraints = @UniqueConstraint(columnNames = {"ACCOUNTS_ID","ROLES_ID"}))
+    @ManyToMany(mappedBy = "roles")
     private List<Account> accounts;
 
 }

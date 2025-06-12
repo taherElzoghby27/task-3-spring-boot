@@ -32,7 +32,7 @@ public class UserAuthSecurityServiceImpl implements UserAuthSecurityService {
             }
             return SecurityMapper.INSTANCE_SECURITY_MAPPER.toUserSecurityDto(user.get());
         } catch (SystemException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

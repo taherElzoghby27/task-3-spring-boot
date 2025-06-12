@@ -2,8 +2,6 @@ package com.spring.boot.task3springboot.config.filters;
 
 import com.spring.boot.task3springboot.config.TokenHandler;
 import com.spring.boot.task3springboot.dto.AccountDto;
-import com.spring.boot.task3springboot.dto.UserSecurityDto;
-import com.spring.boot.task3springboot.mapper.AccountMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

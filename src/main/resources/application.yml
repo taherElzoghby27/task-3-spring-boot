@@ -1,10 +1,13 @@
 spring:
   flyway:
-    schemas: hr
-    default-schema: hr
+    schemas: HR
+    default-schema: HR
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+    user: system
+    password: hr
+    url: jdbc:oracle:thin:@//localhost:1521/orcl
   messages:
     basename: i18n/messages
   application:

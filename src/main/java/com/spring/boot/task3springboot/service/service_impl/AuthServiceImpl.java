@@ -2,7 +2,6 @@ package com.spring.boot.task3springboot.service.service_impl;
 
 import com.spring.boot.task3springboot.config.TokenHandler;
 import com.spring.boot.task3springboot.dto.AccountDto;
-import com.spring.boot.task3springboot.enums.RoleEnum;
 import com.spring.boot.task3springboot.mapper.AccountMapper;
 import com.spring.boot.task3springboot.repository.AuthRepo;
 import com.spring.boot.task3springboot.service.AccountService;
@@ -43,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AccountResponseVm signup(AccountDto accountDto) throws SystemException {
-        accountDto.setRoles(List.of(roleService.findByRole(RoleEnum.USER.toString())));
         accountDto = accountService.createAccount(accountDto);
         AccountResponseVm accountResponseVm = AccountMapper.INSTANCE_ACCOUNT.toAccountResponseVm(accountDto);
         accountResponseVm.setToken(tokenHandler.generateToken(accountDto));
